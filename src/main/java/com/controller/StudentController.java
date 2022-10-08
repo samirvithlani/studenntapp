@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,18 +18,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bean.StudentBean;
 import com.services.StudentServices;
+import com.util.JwtRequest;
 import com.util.ResponseManager;
 
 @RestController
+@CrossOrigin
 public class StudentController {
 
 	@Autowired
 	StudentServices studentServices;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	@PostMapping(value = "/student")
 	public ResponseEntity<?> addStudent(@RequestBody StudentBean studentBean) {
 
 		ResponseManager responseManager = new ResponseManager();
+
+		String encodedPassword = passwordEncoder.encode(studentBean.getPassword());
+		System.out.println(encodedPassword);
+		studentBean.setPassword(encodedPassword);
+
 		int res = studentServices.addStudent(studentBean);
 		if (res > 0) {
 
@@ -91,11 +103,11 @@ public class StudentController {
 		if (stu.isPresent()) {
 			StudentBean students = stu.get();
 			students.setId(students.getId());
-			students.setsName(students.getsName());
+			students.setName(students.getName());
 			students.setsEmail(students.getsEmail());
 			students.setsPhone(students.getsPhone());
 			students.setsAge(students.getsAge());
-			students.setsPassowrd(students.getsPassowrd());
+			students.setPassword(students.getPassword());
 
 			responseManager.setCode(HttpStatus.OK);
 			responseManager.setStatus("success");
@@ -128,6 +140,27 @@ public class StudentController {
 		responseManager.setStatus("failed");
 		responseManager.setCode(HttpStatus.EXPECTATION_FAILED);
 		responseManager.setObject(null);
+		return new ResponseEntity<ResponseManager>(responseManager, HttpStatus.EXPECTATION_FAILED);
+
+	}
+
+	@PostMapping(value = "/login")
+	public ResponseEntity<?> loginStudents(@RequestBody JwtRequest jwtRequest) {
+
+		StudentBean studentBean = studentServices.loginStudent(jwtRequest);
+		ResponseManager responseManager = new ResponseManager();
+		if (studentBean != null) {
+
+			responseManager.setCode(HttpStatus.OK);
+			responseManager.setObject(studentBean);
+			responseManager.setStatus("user found !");
+
+			return new ResponseEntity<ResponseManager>(responseManager, HttpStatus.OK);
+		}
+		responseManager.setCode(HttpStatus.EXPECTATION_FAILED);
+		responseManager.setObject(null);
+		responseManager.setStatus("user not found !");
+
 		return new ResponseEntity<ResponseManager>(responseManager, HttpStatus.EXPECTATION_FAILED);
 
 	}

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.bean.StudentBean;
 import com.services.StudentRepository;
 import com.services.StudentServices;
+import com.util.JwtRequest;
 
 @Repository
 public class StudentDao implements StudentServices {
@@ -59,18 +60,20 @@ public class StudentDao implements StudentServices {
 	@Override
 	public int updateStudent(StudentBean studentBean, int sId) {
 
-		//studentBean new Data
+		// studentBean new Data
 		int res = 0;
 		// old will be there...
 		try {
-			//old record we have fetch from the database...
-			//inside same object studentfromDb we are setting new values coming from studentBean
+			// old record we have fetch from the database...
+			// inside same object studentfromDb we are setting new values coming from
+			// studentBean
 			StudentBean studentFromDb = studentRepository.getById(sId);
-			//inside same object studentfromDb we are setting new values coming from studentBean
+			// inside same object studentfromDb we are setting new values coming from
+			// studentBean
 			studentFromDb.setsAge(studentBean.getsAge());
 			studentFromDb.setsEmail(studentBean.getsEmail());
-			studentFromDb.setsName(studentBean.getsName());
-			studentFromDb.setsPassowrd(studentBean.getsPassowrd());
+			studentFromDb.setName(studentBean.getName());
+			studentFromDb.setPassword(studentBean.getPassword());
 			studentFromDb.setsPhone(studentBean.getsPhone());
 			studentRepository.save(studentFromDb);
 			res = 0;
@@ -81,6 +84,18 @@ public class StudentDao implements StudentServices {
 
 		return res;
 
+	}
+
+	@Override
+	public StudentBean loginStudent(JwtRequest jwtRequest) {
+
+		return studentRepository.findBysEmailAndPassword(jwtRequest.getUsername(), jwtRequest.getPassword());
+	}
+
+	@Override
+	public StudentBean getStudentDetailByEmail(String email) {
+
+		return studentRepository.findBysEmail(email);
 	}
 
 }

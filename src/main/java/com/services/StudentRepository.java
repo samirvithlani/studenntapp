@@ -9,4 +9,6 @@ import com.bean.StudentBean;
 @Repository
 public interface StudentRepository extends JpaRepository<StudentBean, Integer> {
 
+	public StudentBean findBysEmailAndPassword(String sEmail, String password);
+	public StudentBean findBysEmail(String email);
 }

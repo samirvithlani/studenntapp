@@ -7,16 +7,16 @@ import javax.persistence.Table;
 
 //to define this class as persistance class
 @Entity
-@Table(name = "students")
+@Table(name = "student")
 public class StudentBean {
 
 	@Id
 	@GeneratedValue
 	private int id;
 
-	private String sName;
+	private String name;
 	private String sEmail;
-	private String sPassowrd;
+	private String password;
 	private int sAge;
 	private String sPhone;
 
@@ -28,13 +28,7 @@ public class StudentBean {
 		this.id = id;
 	}
 
-	public String getsName() {
-		return sName;
-	}
-
-	public void setsName(String sName) {
-		this.sName = sName;
-	}
+	
 
 	public String getsEmail() {
 		return sEmail;
@@ -44,12 +38,21 @@ public class StudentBean {
 		this.sEmail = sEmail;
 	}
 
-	public String getsPassowrd() {
-		return sPassowrd;
+	
+	public String getName() {
+		return name;
 	}
 
-	public void setsPassowrd(String sPassowrd) {
-		this.sPassowrd = sPassowrd;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public int getsAge() {
